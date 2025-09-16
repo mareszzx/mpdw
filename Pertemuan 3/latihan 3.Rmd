@@ -105,8 +105,7 @@ fore.koyck
 GoF(model.koyck)
 ```
 
-Hasil menunjukkan bahwa nilai **MAPE** pada data uji tergolong sangat baik
-baik, yakni sekitar **0.1935 %**
+Hasil menunjukkan bahwa nilai **MAPE** pada data uji tergolong sangat baik, yakni sekitar **0.1935 %**
 
 # Regression with Distributed Lag
 
