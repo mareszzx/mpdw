@@ -10,14 +10,6 @@ editor_options:
     wrap: 72
 ---
 
-```{r}
-str(model.ardl.opt$Stat.table)
-length(model.ardl.opt$Stat.table)      # jika list
-nrow(model.ardl.opt$Stat.table)        # jika data.frame
-
-```
-
-
 # Packages
 
 ```{r}
@@ -113,9 +105,8 @@ fore.koyck
 GoF(model.koyck)
 ```
 
-Hasil menunjukkan bahwa nilai **MAPE** pada data uji tergolong sangat
-baik, yakni sekitar **2.6 %**, sehingga model Koyck memiliki kemampuan
-peramalan yang sangat akurat untuk indeks kualitas udara.
+Hasil menunjukkan bahwa nilai **MAPE** pada data uji tergolong kurang
+baik, yakni sekitar **19,35 %**
 
 # Regression with Distributed Lag
 
@@ -192,10 +183,8 @@ fore.dlm <- forecast(model = model.dlm, x=test$Xt, h=14)
 GoF(model.dlm)
 ```
 
-Model tersebut merupakan model yang sangat baik dengan nilai MAPE
-sebesar **0,31%**, jauh lebih kecil dari batas 10% yang umum digunakan.
-Hal ini menunjukkan bahwa tingkat kesalahan prediksi model sangat
-rendah.
+Model tersebut merupakan model yang kurang baik dengan nilai MAPE
+sebesar **31,59%**
 
 # Model Autoregressive
 
@@ -276,7 +265,7 @@ fore.ardl <- forecast(model = model.ardl, x=test$Xt, h=14)
 fore.ardl
 ```
 
-Data di atas merupakan hasil peramalan untuk 12 periode ke depan
+Data di atas merupakan hasil peramalan untuk 14 periode ke depan
 menggunakan Model Autoregressive dengan $p=5$ dan $q=14$.
 
 ```{r}
@@ -297,11 +286,11 @@ Pemodelan regresi dengan peubah lag tidak hanya dapat dilakukan dengan
 fungsi pada packages dLagM , tetapi terdapat packages dynlm yang dapat
 digunakan. Fungsi dynlm secara umum adalah sebagai berikut.
 
-```{r}
+
 dynlm(formula, data, subset, weights, na.action, method = "qr",
   model = TRUE, x = FALSE, y = FALSE, qr = TRUE, singular.ok = TRUE,
   contrasts = NULL, offset, start = NULL, end = NULL, ...)
-```
+
 
 Untuk menentukan formula model yang akan digunakan, tersedia fungsi
 tambahan yang memungkinkan spesifikasi dinamika (melalui d() dan L())
