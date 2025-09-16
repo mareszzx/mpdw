@@ -10,6 +10,14 @@ editor_options:
     wrap: 72
 ---
 
+```{r}
+str(model.ardl.opt$Stat.table)
+length(model.ardl.opt$Stat.table)      # jika list
+nrow(model.ardl.opt$Stat.table)        # jika data.frame
+
+```
+
+
 # Packages
 
 ```{r}
@@ -200,10 +208,8 @@ langsung menggunakan nilai yang optimum.
 ```{r}
 model.ardl.opt <- ardlBoundOrders(data = data.frame(data), ic = "AIC", 
                                   formula = Yt ~ Xt )
-min_p=c()
-for (i in 1:20){
-  min_p[i]=min(model.ardl.opt$Stat.table[[i]])
-}
+
+min_p <- sapply(model.ardl.opt$Stat.table, min, na.rm = TRUE)
 
 q_opt=which(min_p==min(min_p, na.rm = TRUE))
 p_opt=which(model.ardl.opt$Stat.table[[q_opt]] == 
