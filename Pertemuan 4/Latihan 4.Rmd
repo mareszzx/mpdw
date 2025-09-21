@@ -52,31 +52,54 @@ ma2
 ## Plot Time Series
 
 ```{r}
+par(mfrow = c(1, 2))
 ts.plot(ma)
+ts.plot(ma2)
 ```
 
-Berdasarkan plot time series, terlihat bahwa data MA(2) yang dibangkitkan stasioner dalam rataan
+Berdasarkan plot time series, terlihat bahwa baik hasil simulasi maupun dengan pembangkitan fungsi data MA(2) yang dibangkitkan stasioner dalam rataan
+
+```{r}
+par(mfrow = c(1, 1))
+```
+
 
 ## Plot ACF
 
 ```{r}
-acf(ma,lag.max = 20)
+par(mfrow = c(1, 2))
+acf(ma)
+acf(ma2)
 ```
 
-Berdasarkan plot AFC tersebut, terlihat bahwa plot ACF *cuts off* di lag kedua
+Berdasarkan plot AFC tersebut baik hasil simulasi maupun dengan pembangkitan fungsi terlihat bahwa plot ACF *cuts off* di lag kedua
+
+```{r}
+par(mfrow = c(1, 1))
+```
 
 ## Plot PACF
 
 ```{r}
+par(mfrow = c(1, 2))
 pacf(ma)
+pacf(ma2)
 ```
 
-Berdasarkan plot PACF tersebut, terlihat bahwa plot PACF cenderung *tails off* dan membentuk gelombang lembah karena nilai teta adalah positif
+Berdasarkan plot PACF tersebut baik hasil simulasi maupun dengan pembangkitan fungsi terlihat bahwa plot PACF cenderung *tails off* dan membentuk gelombang lembah karena nilai teta adalah positif
+
+```{r}
+par(mfrow = c(1, 1))
+```
+
 
 ## Plot EACF
 
 ```{r}
 TSA::eacf(ma)
+```
+```{r}
+TSA::eacf(ma2)
 ```
 
 Berdasarkan pola segitiga nol pada plot EACF, terlihat bahwa segitiga nol berada pada ordo AR(0) dan ordo MA(2)
@@ -192,32 +215,56 @@ ar2
 ## Plot Time Series
 
 ```{r}
+par(mfrow = c(1, 2))
 ts.plot(ar)
+ts.plot(ar2)
 ```
 
-Berdasarkan plot time series tersebut terlihat bahwa data cenderung stasioner pada rataan
+Berdasarkan plot time series tersebut baik hasil simulasi maupun dengan pembangkitan fungsi terlihat bahwa data cenderung stasioner pada rataan
+
+```{r}
+par(mfrow = c(1, 1))
+```
+
 
 ## Plot ACF
 
 ```{r}
+par(mfrow = c(1, 2))
 acf(ar)
+acf(ar2)
 ```
 
-Berdasarkan plot ACF tersebut terlihat bahwa plot ACF cenderung *tails off*
+Berdasarkan plot ACF tersebut baik hasil simulasi maupun dengan pembangkitan fungsi terlihat bahwa plot ACF cenderung *tails off*
+
+```{r}
+par(mfrow = c(1, 1))
+```
 
 ## Plot PACF
 
 ```{r}
+par(mfrow = c(1, 2))
 pacf(ar)
+pacf(ar2)
 ```
 
-Berdasarkan plot PACF tersebut, terlihat bahwa plot PACF *cuts off* pada lag kedua
+Berdasarkan plot PACF tersebut baik hasil simulasi maupun dengan pembangkitan fungsi terlihat bahwa plot PACF *cuts off* pada lag kedua
+
+```{r}
+par(mfrow = c(1, 1))
+```
 
 ## Plot EACF
 
 ```{r}
 TSA::eacf(ar)
 ```
+
+```{r}
+TSA::eacf(ar2)
+```
+
 
 Berdasarkan pola segitiga nol pada plot EACF, terlihat bahwa segitiga nol berada pada ordo AR(1) dan ordo MA(1)
 
@@ -333,32 +380,56 @@ arma22
 ## Plot Time Series
 
 ```{r}
+par(mfrow = c(1, 2))
 ts.plot(y.arma)
+ts.plot(arma22)
 ```
 
 Berdasarkan plot time series tersebut, terlihat bahwa model ARMA(2,2) cenderung stasioner dalam rataan
 
+```{r}
+par(mfrow = c(1, 1))
+```
+
+
 ## Plot ACF
 
 ```{r}
+par(mfrow = c(1, 2))
 acf(y.arma)
+acf(arma22)
 ```
 
-Berdasarkan plot ACF tersebut, terlihat bahwa model ARMA(2,2) hasil simulasi memiliki plot ACF yang *cuts off* di lag 2
+Berdasarkan plot ACF tersebut, terlihat bahwa model ARMA(2,2) baik hasil simulasi maupun dengan pembangkitan fungsi memiliki plot ACF yang *tails off*
+
+```{r}
+par(mfrow = c(1, 1))
+```
 
 ## Plot PACF
 
 ```{r}
+par(mfrow = c(1, 2))
 pacf(y.arma)
+pacf(arma22)
 ```
 
-Berdasarkan plot PACF tersebut, terlihat bahwa model ARMA(1,1) hasil simulasi memiliki plot PACF yang *tails off*
+Berdasarkan plot PACF tersebut, terlihat bahwa model ARMA(2,2) baik hasil simulasi maupun dengan pembangkitan fungsi memiliki plot PACF yang *tails off*
+
+```{r}
+par(mfrow = c(1, 1))
+```
 
 ## Plot EACF
 
 ```{r}
 TSA::eacf(y.arma)
 ```
+
+```{r}
+TSA::eacf(arma22)
+```
+
 
 Berdasarkan pola segitiga nol pada plot EACF, terlihat bahwa segitiga nol berada pada ordo AR(1) dan ordo MA(2)
 
