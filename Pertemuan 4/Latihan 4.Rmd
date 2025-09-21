@@ -2,7 +2,7 @@
 title: "latihan mpdw 4"
 author: "MARESKA RADELA PUTRA"
 date: "2025-09-20"
-output: html_document
+output: rmdformats::readthedown
 ---
 
 # White Noise
@@ -49,7 +49,7 @@ ma2
 
 ## Karakteristik MA(2)
 
-### Plot Time Series
+## Plot Time Series
 
 ```{r}
 ts.plot(ma)
@@ -57,7 +57,7 @@ ts.plot(ma)
 
 Berdasarkan plot time series, terlihat bahwa data MA(2) yang dibangkitkan stasioner dalam rataan
 
-### Plot ACF
+## Plot ACF
 
 ```{r}
 acf(ma,lag.max = 20)
@@ -65,7 +65,7 @@ acf(ma,lag.max = 20)
 
 Berdasarkan plot AFC tersebut, terlihat bahwa plot ACF *cuts off* di lag kedua
 
-### Plot PACF
+## Plot PACF
 
 ```{r}
 pacf(ma)
@@ -73,7 +73,7 @@ pacf(ma)
 
 Berdasarkan plot PACF tersebut, terlihat bahwa plot PACF cenderung *tails off* dan membentuk gelombang lembah karena nilai teta adalah positif
 
-### Plot EACF
+## Plot EACF
 
 ```{r}
 TSA::eacf(ma)
@@ -81,9 +81,9 @@ TSA::eacf(ma)
 
 Berdasarkan pola segitiga nol pada plot EACF, terlihat bahwa segitiga nol berada pada ordo AR(0) dan ordo MA(2)
 
-### Scatterplot Antar Lag
+## Scatterplot Antar Lag
 
-#### Korelasi antara $Y_t$ dengan $Y_{t-1}$
+### Korelasi antara $Y_t$ dengan $Y_{t-1}$
 
 ```{r}
 yt_ma <- ma[-1]
@@ -109,7 +109,7 @@ $$
 \rho_1=\frac{-\theta_1+\theta_1\theta_2}{1+\theta_1^2+\theta_2^2}=\frac{-0.4+0.4\times0.6}{1+0.4^2+0.6^2}=-0.105
 $$
 
-#### Korelasi antara $Y_t$ dengan $Y_{t-2}$
+### Korelasi antara $Y_t$ dengan $Y_{t-2}$
 
 ```{r}
 yt_ma2 <- ma[-c(1,2)]
@@ -135,7 +135,7 @@ $$
 \rho_2=\frac{-\theta_2}{1+\theta_1^2+\theta_2^2}=\frac{-0.6}{1+0.4^2+0.6^2}=-0.394
 $$
 
-#### Korelasi antara $Y_t$ dengan $Y_{t-3}$
+### Korelasi antara $Y_t$ dengan $Y_{t-3}$
 
 ```{r}
 yt_ma3 <- ma[-c(1,2,3)]
@@ -189,7 +189,7 @@ ar2
 
 ## Karakteristik AR(2)
 
-### Plot Time Series
+## Plot Time Series
 
 ```{r}
 ts.plot(ar)
@@ -197,7 +197,7 @@ ts.plot(ar)
 
 Berdasarkan plot time series tersebut terlihat bahwa data cenderung stasioner pada rataan
 
-### Plot ACF
+## Plot ACF
 
 ```{r}
 acf(ar)
@@ -205,7 +205,7 @@ acf(ar)
 
 Berdasarkan plot ACF tersebut terlihat bahwa plot ACF cenderung *tails off*
 
-### Plot PACF
+## Plot PACF
 
 ```{r}
 pacf(ar)
@@ -213,7 +213,7 @@ pacf(ar)
 
 Berdasarkan plot PACF tersebut, terlihat bahwa plot PACF *cuts off* pada lag kedua
 
-### Plot EACF
+## Plot EACF
 
 ```{r}
 TSA::eacf(ar)
@@ -221,9 +221,9 @@ TSA::eacf(ar)
 
 Berdasarkan pola segitiga nol pada plot EACF, terlihat bahwa segitiga nol berada pada ordo AR(1) dan ordo MA(1)
 
-### Scatterplot Antar Lag
+## Scatterplot Antar Lag
 
-#### Korelasi antara $Y_t$ dengan $Y_{t-1}$
+### Korelasi antara $Y_t$ dengan $Y_{t-1}$
 
 ```{r}
 yt_ar <- ar[-1]
@@ -249,7 +249,7 @@ $$
 \rho_1=\frac{\phi_1}{1-\phi_2}=\frac{0.5}{1-0.2}=0.625
 $$
 
-#### Korelasi antara $Y_t$ dengan $Y_{t-2}$
+### Korelasi antara $Y_t$ dengan $Y_{t-2}$
 
 ```{r}
 yt_ar2 <- ar[-c(1,2)]
@@ -275,7 +275,7 @@ $$
 \rho_2=\phi_1\rho_{k-1}+\phi_2\rho_{k-2}=\frac{\phi_2(1-\phi_2)+\phi_1^2}{1-\phi_2}=\frac{0.2(1-0.2)+0.5^2}{1-0.2}=0.5125
 $$
 
-#### Korelasi antara $Y_t$ dengan $Y_{t-3}$
+### Korelasi antara $Y_t$ dengan $Y_{t-3}$
 
 ```{r}
 yt_ar3 <- ar[-c(1,2,3)]
@@ -330,7 +330,7 @@ arma22
 
 ## Karakteristik ARMA(2,2)
 
-### Plot Time Series
+## Plot Time Series
 
 ```{r}
 ts.plot(y.arma)
@@ -338,7 +338,7 @@ ts.plot(y.arma)
 
 Berdasarkan plot time series tersebut, terlihat bahwa model ARMA(2,2) cenderung stasioner dalam rataan
 
-### Plot ACF
+## Plot ACF
 
 ```{r}
 acf(y.arma)
@@ -346,7 +346,7 @@ acf(y.arma)
 
 Berdasarkan plot ACF tersebut, terlihat bahwa model ARMA(2,2) hasil simulasi memiliki plot ACF yang *cuts off* di lag 2
 
-### Plot PACF
+## Plot PACF
 
 ```{r}
 pacf(y.arma)
@@ -354,7 +354,7 @@ pacf(y.arma)
 
 Berdasarkan plot PACF tersebut, terlihat bahwa model ARMA(1,1) hasil simulasi memiliki plot PACF yang *tails off*
 
-### Plot EACF
+## Plot EACF
 
 ```{r}
 TSA::eacf(y.arma)
@@ -362,9 +362,9 @@ TSA::eacf(y.arma)
 
 Berdasarkan pola segitiga nol pada plot EACF, terlihat bahwa segitiga nol berada pada ordo AR(1) dan ordo MA(2)
 
-### Scatterplot Antar Lag
+## Scatterplot Antar Lag
 
-#### Korelasi antara $Y_t$ dengan $Y_{t-1}$
+### Korelasi antara $Y_t$ dengan $Y_{t-1}$
 
 ```{r}
 yt_arma <- y.arma[-1]
@@ -384,7 +384,7 @@ Berdasarkan scatterplot tersebut, terlihat bahwa terdapat hubungan positif antar
 cor(yt_arma,yt_1_arma)
 ```
 
-#### Korelasi antara $Y_t$ dengan $Y_{t-2}$
+### Korelasi antara $Y_t$ dengan $Y_{t-2}$
 
 ```{r}
 yt_arma <- y.arma[-c(1,2)]
@@ -404,7 +404,7 @@ Berdasarkan scatterplot tersebut, terlihat bahwa terdapat hubungan negatif antar
 cor(yt_arma,yt_2_arma)
 ```
 
-#### Korelasi antara $Y_t$ dengan $Y_{t-3}$
+### Korelasi antara $Y_t$ dengan $Y_{t-3}$
 
 ```{r}
 yt_arma <- y.arma[-c(1,2,3)]
@@ -423,63 +423,6 @@ Berdasarkan scatterplot tersebut, terlihat bahwa terdapat hubungan negatif antar
 ```{r}
 cor(yt_arma,yt_3_arma)
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
