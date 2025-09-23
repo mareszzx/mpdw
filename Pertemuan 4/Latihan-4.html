@@ -1303,6 +1303,7 @@ margin-left: 0 !important;
       <li><a href="#plot-pacf-2" id="toc-plot-pacf-2">Plot PACF</a></li>
       <li><a href="#plot-eacf-2" id="toc-plot-eacf-2">Plot EACF</a></li>
       <li><a href="#scatterplot-antar-lag-2" id="toc-scatterplot-antar-lag-2">Scatterplot Antar Lag</a></li>
+      <li><a href="#kesimpulan" id="toc-kesimpulan">Kesimpulan</a></li>
       </ul></li>
       </ul>
     </div>
@@ -2929,6 +2930,17 @@ nol berada pada ordo AR(1) dan ordo MA(2)</p>
 positif antara <span class="math inline">\(Y_t\)</span> dengan <span class="math inline">\(Y_{t-1}\)</span>.</p>
 <div class="sourceCode" id="cb93"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" tabindex="-1"></a><span class="fu">cor</span>(yt_arma,yt_1_arma)</span></code></pre></div>
 <pre><code>## [1] 0.1105697</code></pre>
+<p>Korelasi antara <span class="math inline">\(Y_t\)</span> dengan <span class="math inline">\(Y_{t-1}\)</span> dari hasil simulasi jauh berbeda
+dengan teori, jika berdasarkan teori:</p>
+<p><span class="math display">\[
+\rho_1 = \frac{(1 - \phi_2)\theta_1 + (\phi_1 - \phi_2)\theta_2 +
+\phi_1(1 + \theta_1^2 + \theta_2^2)}
+{(1 - \phi_2)(1 + \theta_1^2 + \theta_2^2) + 2(\phi_1 -
+\phi_2)\theta_1\theta_2}
+= \frac{(1 - 0.2)(0.4) + (0.5 - 0.2)(0.6) + 0.5(1 + 0.4^2 + 0.6^2)}
+{(1 - 0.2)(1 + 0.4^2 + 0.6^2) + 2(0.5 - 0.2)(0.4)(0.6)}
+= \frac{1.26}{1.36} \approx 0.926
+\]</span></p>
 </div>
 <div id="korelasi-antara-y_t-dengan-y_t-2-2" class="section level3">
 <h3>Korelasi antara <span class="math inline">\(Y_t\)</span> dengan
@@ -3063,6 +3075,20 @@ positif antara <span class="math inline">\(Y_t\)</span> dengan <span class="math
 negatif antara <span class="math inline">\(Y_t\)</span> dengan <span class="math inline">\(Y_{t-2}\)</span>.</p>
 <div class="sourceCode" id="cb100"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb100-1"><a href="#cb100-1" tabindex="-1"></a><span class="fu">cor</span>(yt_arma,yt_2_arma)</span></code></pre></div>
 <pre><code>## [1] -0.308692</code></pre>
+<p>Nilai korelasi antara <span class="math inline">\(Y_t\)</span> dengan
+<span class="math inline">\(Y_{t-2}\)</span> dari hasil simulasi jauh
+berbeda dengan teori, jika berdasarkan teori:</p>
+<p><span class="math display">\[
+\rho_2 = \frac{(\phi_1 + \theta_1\theta_2)(1 - \phi_2) + (\phi_1^2 -
+\phi_2)(1 + \theta_1^2 + \theta_2^2) + \theta_2(\theta_1 +
+\phi_1\theta_2)}
+{(1 - \phi_2)(1 + \theta_1^2 + \theta_2^2) + 2(\phi_1 -
+\phi_2)\theta_1\theta_2}
+= \frac{(0.5 + 0.4 \times 0.6)(0.8) + (0.5^2 - 0.2)(1 + 0.4^2 + 0.6^2) +
+0.6(0.4 + 0.5 \times 0.6)}
+{(1-0.2)(1 + 0.4^2 + 0.6^2) + 2(0.5 - 0.2)(0.4)(0.6)}
+= \frac{1.088}{1.36} = 0.8
+\]</span></p>
 </div>
 <div id="korelasi-antara-y_t-dengan-y_t-3-2" class="section level3">
 <h3>Korelasi antara <span class="math inline">\(Y_t\)</span> dengan
@@ -3197,7 +3223,26 @@ negatif antara <span class="math inline">\(Y_t\)</span> dengan <span class="math
 negatif antara <span class="math inline">\(Y_t\)</span> dengan <span class="math inline">\(Y_{t-3}\)</span>.</p>
 <div class="sourceCode" id="cb107"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb107-1"><a href="#cb107-1" tabindex="-1"></a><span class="fu">cor</span>(yt_arma,yt_3_arma)</span></code></pre></div>
 <pre><code>## [1] -0.1286886</code></pre>
+<p>Nilai korelasi antara <span class="math inline">\(Y_t\)</span> dengan
+<span class="math inline">\(Y_{t-2}\)</span> dari hasil simulasi jauh
+berbeda dengan teori, jika berdasarkan teori:</p>
+<p><span class="math display">\[
+\rho_3 = \phi_1 \rho_2 + \phi_2 \rho_1
+= (0.5)(0.8) + (0.2)(0.926)
+= 0.5852
+\]</span></p>
 </div>
+</div>
+<div id="kesimpulan" class="section level2">
+<h2>Kesimpulan</h2>
+<p>Hasil analisis menunjukkan adanya ketidaksesuaian antara model
+ARMA(2,2) yang dibangkitkan dengan perhitungan teoretisnya. Fungsi
+Autokorelasi Diperluas (EACF) justru menyarankan model yang lebih
+sederhana, yaitu MA(1). Pola ACF dan PACF data bangkitan yang terpotong
+setelah lag ke-2 juga mendukung model berorde lebih rendah.
+Kesimpulannya, meskipun data dibangkitkan dari proses teoretis
+ARMA(2,2), analisis diagnostik secara konsisten menunjukkan bahwa model
+MA(1) lebih cocok untuk merepresentasikan data tersebut.</p>
 </div>
 </div>
 </div>

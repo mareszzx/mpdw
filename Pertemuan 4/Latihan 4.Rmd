@@ -455,6 +455,16 @@ Berdasarkan scatterplot tersebut, terlihat bahwa terdapat hubungan positif antar
 cor(yt_arma,yt_1_arma)
 ```
 
+Korelasi antara $Y_t$ dengan $Y_{t-1}$ dari hasil simulasi jauh berbeda dengan teori, jika berdasarkan teori:
+
+$$
+\rho_1 = \frac{(1 - \phi_2)\theta_1 + (\phi_1 - \phi_2)\theta_2 + \phi_1(1 + \theta_1^2 + \theta_2^2)}
+{(1 - \phi_2)(1 + \theta_1^2 + \theta_2^2) + 2(\phi_1 - \phi_2)\theta_1\theta_2}
+= \frac{(1 - 0.2)(0.4) + (0.5 - 0.2)(0.6) + 0.5(1 + 0.4^2 + 0.6^2)}
+{(1 - 0.2)(1 + 0.4^2 + 0.6^2) + 2(0.5 - 0.2)(0.4)(0.6)}
+= \frac{1.26}{1.36} \approx 0.926
+$$
+
 ### Korelasi antara $Y_t$ dengan $Y_{t-2}$
 
 ```{r}
@@ -474,6 +484,16 @@ Berdasarkan scatterplot tersebut, terlihat bahwa terdapat hubungan negatif antar
 ```{r}
 cor(yt_arma,yt_2_arma)
 ```
+
+Nilai korelasi antara $Y_t$ dengan $Y_{t-2}$ dari hasil simulasi jauh berbeda dengan teori, jika berdasarkan teori:
+
+$$
+\rho_2 = \frac{(\phi_1 + \theta_1\theta_2)(1 - \phi_2) + (\phi_1^2 - \phi_2)(1 + \theta_1^2 + \theta_2^2) + \theta_2(\theta_1 + \phi_1\theta_2)}
+{(1 - \phi_2)(1 + \theta_1^2 + \theta_2^2) + 2(\phi_1 - \phi_2)\theta_1\theta_2}
+= \frac{(0.5 + 0.4 \times 0.6)(0.8) + (0.5^2 - 0.2)(1 + 0.4^2 + 0.6^2) + 0.6(0.4 + 0.5 \times 0.6)}
+{(1-0.2)(1 + 0.4^2 + 0.6^2) + 2(0.5 - 0.2)(0.4)(0.6)}
+= \frac{1.088}{1.36} = 0.8
+$$
 
 ### Korelasi antara $Y_t$ dengan $Y_{t-3}$
 
@@ -495,7 +515,15 @@ Berdasarkan scatterplot tersebut, terlihat bahwa terdapat hubungan negatif antar
 cor(yt_arma,yt_3_arma)
 ```
 
+Nilai korelasi antara $Y_t$ dengan $Y_{t-2}$ dari hasil simulasi jauh berbeda dengan teori, jika berdasarkan teori:
 
+$$
+\rho_3 = \phi_1 \rho_2 + \phi_2 \rho_1
+= (0.5)(0.8) + (0.2)(0.926)
+= 0.5852
+$$
 
+## Kesimpulan 
 
+Hasil analisis menunjukkan adanya ketidaksesuaian antara model ARMA(2,2) yang dibangkitkan dengan perhitungan teoretisnya. Fungsi Autokorelasi Diperluas (EACF) justru menyarankan model yang lebih sederhana, yaitu MA(1). Pola ACF dan PACF data bangkitan yang terpotong setelah lag ke-2 juga mendukung model berorde lebih rendah. Kesimpulannya, meskipun data dibangkitkan dari proses teoretis ARMA(2,2), analisis diagnostik secara konsisten menunjukkan bahwa model MA(1) lebih cocok untuk merepresentasikan data tersebut.
 
