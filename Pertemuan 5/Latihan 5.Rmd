@@ -1,1 +1,158 @@
+---
+title: "latihan mpdw 4"
+author: "MARESKA RADELA PUTRA"
+date: "2025-09-20"
+output: rmdformats::readthedown
+---
+
+Tugas:
+Menggunakan data yang sudah dibagi di pertemuan 2 (masing-masing minimal 100 data), lakukan pengecekan ketidakstasioneran dalam rataan dan ragam. Jika tidak terpenuhi stasioneritasnya, lakukan penanganan yang sesuai
+
+# Library
+
+```{r}
+library(readxl)
+library(ggplot2)
+library(tsibble)
+library(tseries)
+library(MASS)
+library(forecast)
+```
+
+# Data Penuh (1-259)
+
+```{r}
+data <- read_xlsx("~/Kuliah/Semester 5/MPDW/MPDW Separated.xlsx")
+dt <- ts(data$Close)
+dt
+(mean1 <- mean(dt))
+var(dt)
+```
+
+## Pemeriksaan Kestasioneran Data
+
+### Plot *Time Series*
+
+```{r}
+plot1 <- dt |> as_tsibble() |> 
+  ggplot(aes(x = index, y = value)) + geom_line() + theme_bw() +
+  geom_hline(yintercept = mean1, color = "red", linetype = "dashed", size = 1) +
+  xlab("Tanggal") + ylab("Harga Tutup")
+plot1
+```
+
+Plot deret waktu tersebut memperlihatkan bahwa data belum stasioner dalam rataan, terlihat dari adanya tren yang berfluktuasi dan tidak berpusat pada nilai tengah (1973.745). Selain itu, data juga tidak stasioner dalam ragam, ditunjukkan oleh perubahan lebar pita dari waktu ke waktu.
+
+### Plot ACF
+
+```{r}
+acf(dt)
+```
+
+Berdasarkan plot ACF, terlihat bahwa plot ACF pada data tersebut menurun secara perlahan (*tails off slowly*) yang menandakan data tidak stasioner dalam rataan
+
+### Uji ADF
+
+$H_0$ : Data tidak stasioner dalam rataan
+$H_1$ : Data stasioner dalam rataan
+
+```{r}
+tseries::adf.test(dt)
+```
+
+Berdasarkan uji ADF tersebut, nilai p didapat sebesar 0.703 yang lebih besar dari taraf nyata 5% sehingga tak tolak $H_0$. Hal ini berarti bahwa data tidak stasioner dalam rataan, sesuai dengan hasil eksplorasi menggunakan plot time series dan plot ACF.
+
+### Plot Box-Cox
+
+```{r}
+index <- seq(1:259)
+bc = boxcox(dt~index, lambda = seq(-4,4,by=0.01))
+```
+
+```{r}
+#Nilai Rounded Lambda
+lambda <- bc$x[which.max(bc$y)]
+lambda
+```
+
+```{r}
+# Selang kepercayaan 95% untuk lambda
+ci_lambda <- bc$x[bc$y > max(bc$y) - 0.5 * qchisq(0.95, 1)]
+
+# Batas bawah dan batas atas
+ci_lower <- min(ci_lambda)
+ci_upper <- max(ci_lambda)
+
+c(Batas_Bawah = ci_lower, Batas_Atas = ci_upper)
+```
+
+Gambar di atas menunjukkan nilai λ optimum (rounded value) sebesar 0.72 dan selang kepercayaan 95% nilai memiliki batas bawah 0,29 dan batas atas 1.15. Selang tersebut memuat nilai satu sehingga dapat dikatakan bahwa data bangkitan stasioner dalam ragam.
+
+## Penanganan Ketidakstasioneran Data
+
+### Differencing
+
+```{r}
+# Differencing pertama pada postrend
+diff1 <- diff(dt, differences = 1)
+
+# Plot hasil differencing
+ts.plot(diff1,
+        main = "First-order Differencing dari dt",
+        col = "blue", lwd = 2)
+```
+
+### Plot ACF
+
+```{r}
+acf(diff1)
+```
+
+### Uji ADF
+
+```{r}
+adf.test(diff1)
+```
+
+Berdasarkan uji ADF tersebut, didapat p-value sebesar 0.01 yang lebih kecil dari taraf nyata 5% sehingga tolak dan menandakan bahwa data sudah stasioner dalam rataan. Hal ini sesuai dengan hasil eksplorasi menggunakan plot time series dan plot ACF.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
