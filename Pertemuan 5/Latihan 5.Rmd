@@ -119,14 +119,12 @@ Gambar di atas menunjukkan nilai λ optimum (rounded value) sebesar 0.343434 dan
 train.ts <- (train.ts^lambda-1)/lambda
 ```
 
-## Differencing
+## Differencing 1
 
 ```{r}
 train.diff <- diff(train.ts,differences = 1) 
-plot.ts(train.diff, lty=1, xlab="Waktu", ylab="Data Difference 1 Harga", main="Plot Difference Harga")
+plot.ts(train.diff, lty=1, xlab="Waktu", ylab="Data Difference 1 Harga Tutup", main="Plot Difference 2 Harga Tutup")
 ```
-
-Berdasarkan plot data deret waktu, terlihat bahwa data sudah stasioner dalam rataan ditandai dengan data bergerak pada nilai tengah tertentu (tidak terdapat trend ataupun musiman pada data)
 
 ### Plot ACF
 
@@ -149,7 +147,7 @@ Berdasarkan uji ADF tersebut, didapat p-value sebesar 0.01 yang lebih kecil dari
 ```{r}
 train_shift <- train.diff - min (train.diff) + 1
 index <- seq_along(train_shift)
-bc = boxcox(train_shift~index, lambda = seq(-5,5,by=0.01))
+bc = boxcox(train_shift~index, lambda = seq(-2,2,by=0.01))
 #Nilai Rounded Lambda
 lambda <- bc$x[which.max(bc$y)]
 lambda
@@ -158,5 +156,48 @@ bc$x[bc$y > max(bc$y) - 1/2 * qchisq(.95,1)]
 
 ```
 
-Kesimpulan: Dari penanganan kestasioneritasan didapatkan bahwa data telah berhasil stasioner dalam rataan tapi setelah penanganana dengan transformasi Box-Cox masih tidak tertangani stasioneritas dalam ragam
+Gambar di atas menunjukkan nilai λ optimum (rounded value) sebesar 2 dan selang kepercayaan 95% nilai memiliki batas bawah 1.77 dan batas atas 2. Selang tersebut belum memuat nilai satu sehingga dapat dikatakan bahwa data sudah stasioner dalam ragam dan dicoba lakukan differencing 1x lagi
+
+## Differencing 2
+
+```{r}
+train.diff2 <- diff(train.diff,differences = 1) 
+plot.ts(train.diff2, lty=1, xlab="Waktu", ylab="Data Difference 2 Harga Tutup", main="Plot Difference 2 Harga Tutup")
+```
+
+Berdasarkan plot data deret waktu, terlihat bahwa data sudah stasioner dalam rataan ditandai dengan data bergerak pada nilai tengah tertentu (tidak terdapat trend ataupun musiman pada data)
+
+### Plot ACF
+
+```{r}
+acf(train.diff2)
+```
+
+Berdasarkan plot tersebut, terlihat bahwa plot ACF sudah tails off secara normal (tidak slowly). Hal ini menandakan data sudah stasioner dalam rataan dan ketidakstasioneran data telah berhasil tertangani.
+
+### Uji ADF
+
+```{r}
+tseries::adf.test(train.diff2)
+```
+
+Berdasarkan uji ADF tersebut, didapat p-value sebesar 0.01 yang lebih kecil dari taraf nyata 5% sehingga tolak dan menandakan bahwa data sudah stasioner dalam rataan. Hal ini sesuai dengan hasil eksplorasi menggunakan plot time series dan plot ACF.
+
+### Plot Box-Cox
+
+```{r}
+train_shift <- train.diff2 - min (train.diff2) + 1
+index <- seq_along(train_shift)
+bc = boxcox(train_shift~index, lambda = seq(-2,2,by=0.01))
+#Nilai Rounded Lambda
+lambda <- bc$x[which.max(bc$y)]
+lambda
+#SK
+bc$x[bc$y > max(bc$y) - 1/2 * qchisq(.95,1)]
+
+```
+
+Gambar di atas menunjukkan nilai λ optimum (rounded value) sebesar 0.78 dan selang kepercayaan 95% nilai memiliki batas bawah 0.45 dan batas atas 1.13. Selang tersebut memuat nilai satu sehingga dapat dikatakan bahwa data sudah stasioner dalam ragam.
+
+Kesimpulan: Dari penanganan kestasioneritasan didapatkan bahwa data telah berhasil stasioner dalam rataan maupun dalam ragam dan selanjutnya dapat dilakukan identifikasi model tentatif
 
