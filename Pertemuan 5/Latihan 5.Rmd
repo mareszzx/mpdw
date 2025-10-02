@@ -29,9 +29,9 @@ dt
 var(dt)
 ```
 
-## Pemeriksaan Kestasioneran Data
+# Pemeriksaan Kestasioneran Data
 
-### Plot *Time Series*
+## Plot *Time Series*
 
 ```{r}
 plot1 <- dt |> as_tsibble() |> 
@@ -43,7 +43,7 @@ plot1
 
 Plot deret waktu tersebut memperlihatkan bahwa data belum stasioner dalam rataan, terlihat dari adanya tren yang berfluktuasi dan tidak berpusat pada nilai tengah (1973.745). Selain itu, data juga tidak stasioner dalam ragam, ditunjukkan oleh perubahan lebar pita dari waktu ke waktu.
 
-### Plot ACF
+## Plot ACF
 
 ```{r}
 acf(dt)
@@ -51,7 +51,7 @@ acf(dt)
 
 Berdasarkan plot ACF, terlihat bahwa plot ACF pada data tersebut menurun secara perlahan (*tails off slowly*) yang menandakan data tidak stasioner dalam rataan
 
-### Uji ADF
+## Uji ADF
 
 $H_0$ : Data tidak stasioner dalam rataan
 $H_1$ : Data stasioner dalam rataan
@@ -62,7 +62,7 @@ tseries::adf.test(dt)
 
 Berdasarkan uji ADF tersebut, nilai p didapat sebesar 0.703 yang lebih besar dari taraf nyata 5% sehingga tak tolak $H_0$. Hal ini berarti bahwa data tidak stasioner dalam rataan, sesuai dengan hasil eksplorasi menggunakan plot time series dan plot ACF.
 
-### Plot Box-Cox
+## Plot Box-Cox
 
 ```{r}
 index <- seq(1:259)
@@ -86,11 +86,11 @@ ci_upper <- max(ci_lambda)
 c(Batas_Bawah = ci_lower, Batas_Atas = ci_upper)
 ```
 
-Gambar di atas menunjukkan nilai λ optimum (rounded value) sebesar 0.72 dan selang kepercayaan 95% nilai memiliki batas bawah 0,29 dan batas atas 1.15. Selang tersebut memuat nilai satu sehingga dapat dikatakan bahwa data bangkitan stasioner dalam ragam.
+Gambar di atas menunjukkan nilai λ optimum (rounded value) sebesar 0.72 dan selang kepercayaan 95% nilai memiliki batas bawah 0,29 dan batas atas 1.15. Selang tersebut memuat nilai satu sehingga dapat dikatakan bahwa data stasioner dalam ragam.
 
-## Penanganan Ketidakstasioneran Data
+# Penanganan Ketidakstasioneran Data
 
-### Differencing
+## Differencing
 
 ```{r}
 # Differencing pertama pada postrend
@@ -102,13 +102,13 @@ ts.plot(diff1,
         col = "blue", lwd = 2)
 ```
 
-### Plot ACF
+## Plot ACF
 
 ```{r}
 acf(diff1)
 ```
 
-### Uji ADF
+## Uji ADF
 
 ```{r}
 adf.test(diff1)
@@ -117,42 +117,6 @@ adf.test(diff1)
 Berdasarkan uji ADF tersebut, didapat p-value sebesar 0.01 yang lebih kecil dari taraf nyata 5% sehingga tolak dan menandakan bahwa data sudah stasioner dalam rataan. Hal ini sesuai dengan hasil eksplorasi menggunakan plot time series dan plot ACF.
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Kesimpulan: Dari penanganan kestasioneritasan (differencing 1x) didapatkan bahwa data telah berhasil stasioner dalam rataan dan bisa dilanjutkan untuk identifikasi model tentatif
 
 
