@@ -1,5 +1,5 @@
 ---
-title: "latihan mpdw 4"
+title: "latihan 5"
 author: "MARESKA RADELA PUTRA"
 date: "2025-09-20"
 output: rmdformats::readthedown
@@ -19,34 +19,58 @@ library(MASS)
 library(forecast)
 ```
 
-# Data Penuh (1-259)
+# Data
 
 ```{r}
-data <- read_xlsx("~/Kuliah/Semester 5/MPDW/MPDW Separated.xlsx")
-dt <- ts(data$Close)
-dt
-(mean1 <- mean(dt))
-var(dt)
+dt <- read_xlsx("~/Kuliah/Semester 5/MPDW/MPDW Separated.xlsx")
+dt.ts<-ts(dt)
 ```
 
-# Pemeriksaan Kestasioneran Data
+## Eksplorasi Data
 
-## Plot *Time Series*
+### Plot Data Penuh
 
 ```{r}
-plot1 <- dt |> as_tsibble() |> 
-  ggplot(aes(x = index, y = value)) + geom_line() + theme_bw() +
-  geom_hline(yintercept = mean1, color = "red", linetype = "dashed", size = 1) +
-  xlab("Tanggal") + ylab("Harga Tutup")
-plot1
+plot.ts(dt.ts[,"Close"], lty=1, xlab="Waktu", ylab="Harga Tutup",
+        main="Plot Data Harga Saham JKSE Waktu Tutup")
 ```
 
-Plot deret waktu tersebut memperlihatkan bahwa data belum stasioner dalam rataan, terlihat dari adanya tren yang berfluktuasi dan tidak berpusat pada nilai tengah (1973.745). Selain itu, data juga tidak stasioner dalam ragam, ditunjukkan oleh perubahan lebar pita dari waktu ke waktu.
+Berdasarkan plot data deret waktu, terlihat bahwa data cenderung memiliki trend fluktuatif dari naik ke turun dan kembali naik. Berdasarkan pola data, pembagian data latih dan data uji ditetapkan dengan proporsi 89%:11%.
+
+### Plot Data Latih
+
+```{r}
+# ambil hanya kolom harga (misalnya "Close")
+dtclose <- dt.ts[,"Close"]
+
+# bagi train set sesuai indeks
+dttrain <- dtclose[1:231]
+train.ts <- ts(dttrain)
+
+# plot ulang
+plot.ts(train.ts, lty=1, xlab="Waktu", ylab="Harga",
+        main="Plot Harga Train (Close)")
+
+```
+
+Berdasarkan plot data deret waktu pada data latih, terlihat bahwa data cenderung memiliki trend fluktuatif dan tidak bergerak pada nilai tengah tertentu. Hal ini mengindikasikan bahwa data tidak stasioner dalam rataan.
+
+### Plot Data Uji
+
+```{r}
+dttest <- dtclose[232:259]
+test.ts <- ts(dttest)
+plot.ts(test.ts, lty=1, xlab="Waktu", ylab="Harga",
+        main="Plot Harga Test (Close)")
+
+```
+
+# Uji Stasioneritas Data
 
 ## Plot ACF
 
 ```{r}
-acf(dt)
+acf(train.ts)
 ```
 
 Berdasarkan plot ACF, terlihat bahwa plot ACF pada data tersebut menurun secara perlahan (*tails off slowly*) yang menandakan data tidak stasioner dalam rataan
@@ -57,20 +81,19 @@ $H_0$ : Data tidak stasioner dalam rataan
 $H_1$ : Data stasioner dalam rataan
 
 ```{r}
-tseries::adf.test(dt)
+tseries::adf.test(train.ts)
 ```
 
-Berdasarkan uji ADF tersebut, nilai p didapat sebesar 0.703 yang lebih besar dari taraf nyata 5% sehingga tak tolak $H_0$. Hal ini berarti bahwa data tidak stasioner dalam rataan, sesuai dengan hasil eksplorasi menggunakan plot time series dan plot ACF.
+Berdasarkan uji ADF tersebut, nilai p didapat sebesar 0.6789 yang lebih besar dari taraf nyata 5% sehingga tak tolak $H_0$. Hal ini berarti bahwa data tidak stasioner dalam rataan, sesuai dengan hasil eksplorasi menggunakan plot time series dan plot ACF.
 
 ## Plot Box-Cox
 
 ```{r}
-index <- seq(1:259)
-bc = boxcox(dt~index, lambda = seq(-4,4,by=0.01))
+index <- seq(1:231)
+bc = boxcox(train.ts~index, lambda = seq(-2,2,by=1))
 ```
 
 ```{r}
-#Nilai Rounded Lambda
 lambda <- bc$x[which.max(bc$y)]
 lambda
 ```
@@ -86,37 +109,54 @@ ci_upper <- max(ci_lambda)
 c(Batas_Bawah = ci_lower, Batas_Atas = ci_upper)
 ```
 
-Gambar di atas menunjukkan nilai λ optimum (rounded value) sebesar 0.72 dan selang kepercayaan 95% nilai memiliki batas bawah 0,29 dan batas atas 1.15. Selang tersebut memuat nilai satu sehingga dapat dikatakan bahwa data stasioner dalam ragam.
+Gambar di atas menunjukkan nilai λ optimum (rounded value) sebesar 0.343434 dan selang kepercayaan 95% nilai memiliki batas bawah -0.1414141 dan batas atas 0.8282828. Selang tersebut tidak memuat nilai satu sehingga dapat dikatakan bahwa data tidak stasioner dalam ragam.
 
 # Penanganan Ketidakstasioneran Data
+
+## Transformasi Box-Cox
+
+```{r}
+train.ts <- (train.ts^lambda-1)/lambda
+```
 
 ## Differencing
 
 ```{r}
-# Differencing pertama pada postrend
-diff1 <- diff(dt, differences = 1)
-
-# Plot hasil differencing
-ts.plot(diff1,
-        main = "First-order Differencing dari dt",
-        col = "blue", lwd = 2)
+train.diff <- diff(train.ts,differences = 1) 
+plot.ts(train.diff, lty=1, xlab="Waktu", ylab="Data Difference 1 Harga", main="Plot Difference Harga")
 ```
 
-## Plot ACF
+Berdasarkan plot data deret waktu, terlihat bahwa data sudah stasioner dalam rataan ditandai dengan data bergerak pada nilai tengah tertentu (tidak terdapat trend ataupun musiman pada data)
+
+### Plot ACF
 
 ```{r}
-acf(diff1)
+acf(train.diff)
 ```
 
-## Uji ADF
+Berdasarkan plot tersebut, terlihat bahwa plot ACF sudah tails off secara normal (tidak slowly). Hal ini menandakan data sudah stasioner dalam rataan dan ketidakstasioneran data telah berhasil tertangani.
+
+### Uji ADF
 
 ```{r}
-adf.test(diff1)
+tseries::adf.test(train.diff)
 ```
 
 Berdasarkan uji ADF tersebut, didapat p-value sebesar 0.01 yang lebih kecil dari taraf nyata 5% sehingga tolak dan menandakan bahwa data sudah stasioner dalam rataan. Hal ini sesuai dengan hasil eksplorasi menggunakan plot time series dan plot ACF.
 
+### Plot Box-Cox
 
-Kesimpulan: Dari penanganan kestasioneritasan (differencing 1x) didapatkan bahwa data telah berhasil stasioner dalam rataan dan bisa dilanjutkan untuk identifikasi model tentatif
+```{r}
+train_shift <- train.diff - min (train.diff) + 1
+index <- seq_along(train_shift)
+bc = boxcox(train_shift~index, lambda = seq(-5,5,by=0.01))
+#Nilai Rounded Lambda
+lambda <- bc$x[which.max(bc$y)]
+lambda
+#SK
+bc$x[bc$y > max(bc$y) - 1/2 * qchisq(.95,1)]
 
+```
+
+Kesimpulan: Dari penanganan kestasioneritasan didapatkan bahwa data telah berhasil stasioner dalam rataan tapi setelah penanganana dengan transformasi Box-Cox masih tidak tertangani stasioneritas dalam ragam
 
