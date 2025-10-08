@@ -36,7 +36,7 @@ plot.ts(dt.ts[,"Close"], lty=1, xlab="Waktu", ylab="Harga Tutup",
         main="Plot Data Harga Saham JKSE Waktu Tutup")
 ```
 
-Berdasarkan plot data deret waktu, terlihat bahwa data cenderung memiliki trend fluktuatif dari naik ke turun dan kembali naik. Berdasarkan pola data, pembagian data latih dan data uji ditetapkan dengan proporsi 89%:11%.
+Berdasarkan plot data deret waktu, terlihat bahwa data cenderung memiliki trend fluktuatif dari naik ke turun dan kembali naik. Berdasarkan pola data, pembagian data latih dan data uji ditetapkan dengan proporsi 88%:12%.
 
 ### Plot Data Latih
 
@@ -45,7 +45,7 @@ Berdasarkan plot data deret waktu, terlihat bahwa data cenderung memiliki trend 
 dtclose <- dt.ts[,"Close"]
 
 # bagi train set sesuai indeks
-dttrain <- dtclose[1:231]
+dttrain <- dtclose[1:227]
 train.ts <- ts(dttrain)
 
 # plot ulang
@@ -59,7 +59,7 @@ Berdasarkan plot data deret waktu pada data latih, terlihat bahwa data cenderung
 ### Plot Data Uji
 
 ```{r}
-dttest <- dtclose[232:259]
+dttest <- dtclose[228:259]
 test.ts <- ts(dttest)
 plot.ts(test.ts, lty=1, xlab="Waktu", ylab="Harga",
         main="Plot Harga Test (Close)")
@@ -90,7 +90,7 @@ Berdasarkan uji ADF tersebut, nilai p didapat sebesar 0.6789 yang lebih besar da
 ## Plot Box-Cox
 
 ```{r}
-index <- seq(1:231)
+index <- seq(1:227)
 bc = boxcox(train.ts~index, lambda = seq(-2,2,by=1))
 ```
 
@@ -110,7 +110,7 @@ ci_upper <- max(ci_lambda)
 c(Batas_Bawah = ci_lower, Batas_Atas = ci_upper)
 ```
 
-Gambar di atas menunjukkan nilai λ optimum (rounded value) sebesar 0.343434 dan selang kepercayaan 95% nilai memiliki batas bawah -0.1414141 dan batas atas 0.8282828. Selang tersebut tidak memuat nilai satu sehingga dapat dikatakan bahwa data tidak stasioner dalam ragam.
+Gambar di atas menunjukkan nilai λ optimum (rounded value) sebesar 0.2626263 dan selang kepercayaan 95% nilai memiliki batas bawah -0.2222222 dan batas atas 0.7474747. Selang tersebut tidak memuat nilai satu sehingga dapat dikatakan bahwa data tidak stasioner dalam ragam.
 
 # Penanganan Ketidakstasioneran Data
 
@@ -151,7 +151,7 @@ bc$x[bc$y > max(bc$y) - 1/2 * qchisq(.95,1)]
 
 ```
 
-Gambar di atas menunjukkan nilai λ optimum (rounded value) sebesar 2 dan selang kepercayaan 95% nilai memiliki batas bawah 1.77 dan batas atas 2. Selang tersebut belum memuat nilai satu sehingga dapat dikatakan bahwa data sudah stasioner dalam ragam dan dicoba lakukan differencing 1x lagi
+Gambar di atas menunjukkan nilai λ optimum (rounded value) sebesar 1.81 dan selang kepercayaan 95% nilai memiliki batas bawah 1.47 dan batas atas 2. Selang tersebut belum memuat nilai satu sehingga dapat dikatakan bahwa data sudah stasioner dalam ragam dan dicoba lakukan differencing 1x lagi
 
 ## Differencing 2
 
@@ -192,7 +192,7 @@ bc2$x[bc2$y > max(bc2$y) - 1/2 * qchisq(.95,1)]
 
 ```
 
-Gambar di atas menunjukkan nilai λ optimum (rounded value) sebesar 0.78 dan selang kepercayaan 95% nilai memiliki batas bawah 0.45 dan batas atas 1.13. Selang tersebut memuat nilai satu sehingga dapat dikatakan bahwa data sudah stasioner dalam ragam.
+Gambar di atas menunjukkan nilai λ optimum (rounded value) sebesar 0.9 dan selang kepercayaan 95% nilai memiliki batas bawah 0.73 dan batas atas 1.09. Selang tersebut memuat nilai satu sehingga dapat dikatakan bahwa data sudah stasioner dalam ragam.
 
 
 # Identifikasi Model
@@ -312,7 +312,7 @@ $H_0$ : Sisaan saling bebas
 
 $H_1$ : Sisaan tidak tidak saling bebas
 
-Berdasarkan uji Ljung-Box tersebut, didapat *p-value* sebesar 0.1345 yang lebih besar dari taraf nyata 5% sehingga tak tolak $H_0$ dan menandakan bahwa sisaan saling bebas. Hal ini berbeda dengan eksplorasi.
+Berdasarkan uji Ljung-Box tersebut, didapat *p-value* sebesar 0.122 yang lebih besar dari taraf nyata 5% sehingga tak tolak $H_0$ dan menandakan bahwa sisaan saling bebas. Hal ini berbeda dengan eksplorasi.
 
 ```{r}
 #3) Sisaan homogen 
@@ -323,7 +323,7 @@ $H_0$ : Ragam sisaan homogen
 
 $H_1$ : Ragam sisaan tidak homogen
 
-Berdasarkan uji Ljung-Box terhadap sisaan kuadrat tersebut, didapat *p-value* sebesar 0.05047 yang lebih dari taraf nyata 5% sehingga tak tolak $H_0$ dan menandakan bahwa ragam sisaan homogen.
+Berdasarkan uji Ljung-Box terhadap sisaan kuadrat tersebut, didapat *p-value* sebesar 0.05342 yang lebih dari taraf nyata 5% sehingga tak tolak $H_0$ dan menandakan bahwa ragam sisaan homogen.
 
 ```{r}
 #4) Nilai tengah sisaan sama dengan nol 
@@ -334,7 +334,7 @@ $H_0$ : nilai tengah sisaan sama dengan 0
 
 $H_1$ : nilai tengah sisaan tidak sama dengan 0
 
-Berdasarkan uji-ttersebut, didapat *p-value* sebesar 0.8513 yang lebih besar dari taraf nyata 5% sehingga tak tolak $H_0$ dan menandakan bahwa nilai tengah sisaan sama dengan nol. Hal ini berbeda dengan eksplorasi.
+Berdasarkan uji-ttersebut, didapat *p-value* sebesar 0.8566 yang lebih besar dari taraf nyata 5% sehingga tak tolak $H_0$ dan menandakan bahwa nilai tengah sisaan sama dengan nol. Hal ini berbeda dengan eksplorasi.
 
 # Overfitting
 
@@ -344,7 +344,7 @@ Hasil model ARIMA(0,2,1) kemudian dilakukan pemeriksaan pada model overfittingny
 
 ```{r}
 #---FORECAST---#
-ramalan.da <- forecast::forecast(model1.da, h = 28) 
+ramalan.da <- forecast::forecast(model1.da, h = 32) 
 ramalan.da
 data.ramalan.da <- ramalan.da$mean
 plot(ramalan.da)
@@ -353,18 +353,18 @@ plot(ramalan.da)
 Berdasarkan hasil plot ramalan di atas, dapat dilihat bahwa ramalan ARIMA(0,2,1) cenderung stabil hingga akhir periode. Selanjutnya, dapat dicari nilai akurasi antara hasil ramalan dengan data uji sebagai berikut.
 
 ```{r}
-pt_1 <- train.ts[231] #nilai akhir data latih
+pt_1 <- train.ts[227] #nilai akhir data latih
 data.ramalan.da <- c(pt_1, data.ramalan.da)
-hasil <- ts(data.ramalan.da, start=231)
+hasil <- ts(data.ramalan.da, start=227)
 ts.plot(train.ts,hasil)
 ```
 
 ```{r}
-perbandingan.da<-matrix(data=c(head(test.ts, n=28), hasil[-1]),
-                     nrow = 28, ncol = 2)
+perbandingan.da<-matrix(data=c(head(test.ts, n=32), hasil[-1]),
+                     nrow = 32, ncol = 2)
 colnames(perbandingan.da)<-c("Aktual","Hasil Forecast")
 perbandingan.da
-accuracy(ts(hasil[-1]), head(test.ts, n=28))
+accuracy(ts(hasil[-1]), head(test.ts, n=32))
 ```
 
 Hasil peramalan dari model ARIMA(0,2,1) dapat dikatakan sangat baik karena memiliki nilai MAPE yang kurang dari 10%, yaitu hanya 2.819082% saja.
