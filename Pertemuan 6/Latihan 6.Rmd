@@ -1,1 +1,273 @@
+---
+title: "latihan 6"
+author: "MARESKA RADELA PUTRA"
+date: "2025-10-09"
+output: rmdformats::readthedown
+---
 
+# Library
+
+```{r}
+library(ggplot2)
+library(tsibble)
+library(tseries)
+library(MASS)
+library(forecast)
+library(TSA)
+library(TTR)
+library(aTSA)
+library(graphics)
+library(readxl)
+```
+
+# Data
+
+```{r}
+dt <- read_xlsx("~/Kuliah/Semester 5/MPDW/MPDW Separated.xlsx")
+dt.ts<-ts(dt)
+```
+
+## Eksplorasi Data
+
+### Plot Data Penuh
+
+```{r}
+plot.ts(dt.ts[,"Close"], lty=1, xlab="Waktu", ylab="Harga Tutup",
+        main="Plot Data Harga Saham JKSE Waktu Tutup")
+```
+
+Berdasarkan plot data deret waktu, terlihat bahwa data cenderung memiliki trend fluktuatif dari naik ke turun dan kembali naik. Berdasarkan pola data, pembagian data latih dan data uji ditetapkan dengan proporsi 89%:11%.
+
+### Plot Data Latih
+
+```{r}
+# ambil hanya kolom harga (misalnya "Close")
+dtclose <- dt.ts[,"Close"]
+
+# bagi train set sesuai indeks
+dttrain <- dtclose[1:231]
+train.ts <- ts(dttrain)
+
+# plot ulang
+plot.ts(train.ts, lty=1, xlab="Waktu", ylab="Harga",
+        main="Plot Harga Train (Close)")
+
+```
+
+Berdasarkan plot data deret waktu pada data latih, terlihat bahwa data cenderung memiliki trend fluktuatif dan tidak bergerak pada nilai tengah tertentu. Hal ini mengindikasikan bahwa data tidak stasioner dalam rataan.
+
+### Plot Data Uji
+
+```{r}
+dttest <- dtclose[232:259]
+test.ts <- ts(dttest)
+plot.ts(test.ts, lty=1, xlab="Waktu", ylab="Harga",
+        main="Plot Harga Test (Close)")
+
+```
+
+# Uji Stasioneritas Data
+
+## Plot ACF
+
+```{r}
+acf(train.ts)
+```
+
+Berdasarkan plot ACF, terlihat bahwa plot ACF pada data tersebut menurun secara perlahan (*tails off slowly*) yang menandakan data tidak stasioner dalam rataan
+
+## Uji ADF
+
+$H_0$ : Data tidak stasioner dalam rataan
+$H_1$ : Data stasioner dalam rataan
+
+```{r}
+tseries::adf.test(train.ts)
+```
+
+Berdasarkan uji ADF tersebut, nilai p didapat sebesar 0.6789 yang lebih besar dari taraf nyata 5% sehingga tak tolak $H_0$. Hal ini berarti bahwa data tidak stasioner dalam rataan, sesuai dengan hasil eksplorasi menggunakan plot time series dan plot ACF.
+
+## Plot Box-Cox
+
+```{r}
+index <- seq(1:231)
+bc = boxcox(train.ts~index, lambda = seq(-2,2,by=1))
+```
+
+```{r}
+lambda <- bc$x[which.max(bc$y)]
+lambda
+```
+
+```{r}
+# Selang kepercayaan 95% untuk lambda
+ci_lambda <- bc$x[bc$y > max(bc$y) - 0.5 * qchisq(0.95, 1)]
+
+# Batas bawah dan batas atas
+ci_lower <- min(ci_lambda)
+ci_upper <- max(ci_lambda)
+
+c(Batas_Bawah = ci_lower, Batas_Atas = ci_upper)
+```
+
+Gambar di atas menunjukkan nilai λ optimum (rounded value) sebesar 0.343434 dan selang kepercayaan 95% nilai memiliki batas bawah -0.1414141 dan batas atas 0.8282828. Selang tersebut tidak memuat nilai satu sehingga dapat dikatakan bahwa data tidak stasioner dalam ragam.
+
+# Penanganan Ketidakstasioneran Data
+
+## Differencing 1
+
+```{r}
+train.diff <- diff(train.ts,differences = 1) 
+plot.ts(train.diff, lty=1, xlab="Waktu", ylab="Data Difference 1 Harga Tutup", main="Plot Difference 1 Harga Tutup")
+```
+
+### Plot ACF
+
+```{r}
+acf(train.diff)
+```
+
+Berdasarkan plot tersebut, terlihat bahwa plot ACF sudah tails off secara normal (tidak slowly). Hal ini menandakan data sudah stasioner dalam rataan dan ketidakstasioneran data telah berhasil tertangani.
+
+### Uji ADF
+
+```{r}
+tseries::adf.test(train.diff)
+```
+
+Berdasarkan uji ADF tersebut, didapat p-value sebesar 0.01 yang lebih kecil dari taraf nyata 5% sehingga tolak dan menandakan bahwa data sudah stasioner dalam rataan. Hal ini sesuai dengan hasil eksplorasi menggunakan plot time series dan plot ACF.
+
+### Plot Box-Cox
+
+```{r}
+train_shift <- train.diff - min (train.diff) + 1
+index <- seq_along(train_shift)
+bc = boxcox(train_shift~index, lambda = seq(-2,2,by=0.01))
+#Nilai Rounded Lambda
+lambda <- bc$x[which.max(bc$y)]
+lambda
+#SK
+bc$x[bc$y > max(bc$y) - 1/2 * qchisq(.95,1)]
+
+```
+
+Gambar di atas menunjukkan nilai λ optimum (rounded value) sebesar 2 dan selang kepercayaan 95% nilai memiliki batas bawah 1.77 dan batas atas 2. Selang tersebut belum memuat nilai satu sehingga dapat dikatakan bahwa data sudah stasioner dalam ragam dan dicoba lakukan differencing 1x lagi
+
+## Differencing 2
+
+```{r}
+train.diff2 <- diff(train.diff,differences = 1) 
+plot.ts(train.diff2, lty=1, xlab="Waktu", ylab="Data Difference 2 Harga Tutup", main="Plot Difference 2 Harga Tutup")
+```
+
+Berdasarkan plot data deret waktu, terlihat bahwa data sudah stasioner dalam rataan ditandai dengan data bergerak pada nilai tengah tertentu (tidak terdapat trend ataupun musiman pada data)
+
+### Plot ACF
+
+```{r}
+acf(train.diff2)
+```
+
+Berdasarkan plot tersebut, terlihat bahwa plot ACF sudah tails off secara normal (tidak slowly). Hal ini menandakan data sudah stasioner dalam rataan dan ketidakstasioneran data telah berhasil tertangani.
+
+### Uji ADF
+
+```{r}
+tseries::adf.test(train.diff2)
+```
+
+Berdasarkan uji ADF tersebut, didapat p-value sebesar 0.01 yang lebih kecil dari taraf nyata 5% sehingga tolak dan menandakan bahwa data sudah stasioner dalam rataan. Hal ini sesuai dengan hasil eksplorasi menggunakan plot time series dan plot ACF.
+
+### Plot Box-Cox
+
+```{r}
+train_shift2 <- train.diff2 - min (train.diff2) + 1
+index <- seq_along(train_shift2)
+bc2 = boxcox(train_shift2~index, lambda = seq(-2,2,by=0.01))
+#Nilai Rounded Lambda
+lambda2 <- bc2$x[which.max(bc2$y)]
+lambda2
+#SK
+bc2$x[bc2$y > max(bc2$y) - 1/2 * qchisq(.95,1)]
+
+```
+
+Gambar di atas menunjukkan nilai λ optimum (rounded value) sebesar 0.78 dan selang kepercayaan 95% nilai memiliki batas bawah 0.45 dan batas atas 1.13. Selang tersebut memuat nilai satu sehingga dapat dikatakan bahwa data sudah stasioner dalam ragam.
+
+
+# Identifikasi Model
+
+## Plot ACF
+
+```{r}
+acf(train.diff2)
+```
+
+Berdasarkan plot tersebut, terlihat bahwa plot ACF cenderung *tails off*.
+
+## Plot PACF
+
+```{r}
+pacf(train.diff2)
+```
+
+Berdasarkan plot tersebut, terlihat bahwa plot PACF cenderung *tails off*. Jika baik plot ACF maupun plot PACF keduanya dianggap tails of, maka model yang terbentuk adalah ARIMA(1,2,1)
+
+## Plot EACF
+
+```{r}
+eacf(train.diff2)
+```
+
+Identifikasi model menggunakan plot EACF dilakukan dengan melihat ujung segitiga pada pola segitiga nol. Dalam hal ini model tentatif yang terbentuk adalah ARIMA(0,2,1), ARIMA(0,2,2), ARIMA(1,2,2), ARIMA(2,2,2), dan ARIMA(0,2,3).
+
+# Pendugaan Parameter Model Tentatif
+
+## ARIMA(0,2,1)
+
+```{r}
+model1.da=Arima(train.ts, order=c(0,2,1),method="ML")
+summary(model1.da)
+lmtest::coeftest(model1.da)
+```
+
+## ARIMA(0,2,2)
+
+```{r}
+model2.da=Arima(train.ts, order=c(0,2,2),method="ML")
+summary(model2.da)
+lmtest::coeftest(model2.da)
+```
+
+## ARIMA(1,2,1)
+
+```{r}
+model3.da=Arima(train.ts, order=c(1,2,1),method="ML")
+summary(model3.da)
+lmtest::coeftest(model3.da)
+```
+
+## ARIMA(1,2,2)
+
+```{r}
+model4.da=Arima(train.ts, order=c(1,2,2),method="ML")
+summary(model4.da)
+lmtest::coeftest(model4.da)
+```
+
+## ARIMA(2,2,2)
+
+```{r}
+model5.da=Arima(train.ts, order=c(2,2,2),method="ML")
+summary(model5.da)
+lmtest::coeftest(model5.da)
+```
+
+## ARIMA(0,2,3)
+
+```{r}
+model6.da=Arima(train.ts, order=c(0,2,3),method="ML")
+summary(model6.da)
+lmtest::coeftest(model6.da)
+```
+Berdasarkan pendugaan parameter di atas, nilai AIC terkecil dimiliki oleh model ARIMA(1,1,1) dan parameter model ARIMA(1,1,1) juga seluruhnya signifikan pada taraf nyata 10% sehingga model yang dipilih adalah model ARIMA(1,1,1).
