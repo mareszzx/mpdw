@@ -367,4 +367,4 @@ perbandingan.da
 accuracy(ts(hasil[-1]), head(test.ts, n=32))
 ```
 
-Hasil peramalan dari model ARIMA(0,2,1) dapat dikatakan sangat baik karena memiliki nilai MAPE yang kurang dari 10%, yaitu hanya 2.742799% saja.
+Hasil peramalan dari model ARIMA(0,2,1) dapat dikatakan sangat baik karena memiliki nilai MAPE yang kurang dari 10%, yaitu hanya 2.74% saja.
